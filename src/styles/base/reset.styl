@@ -1,0 +1,72 @@
+html
+	box-sizing: border-box
+*,
+*:after,
+*:before
+	padding: 0
+	margin: 0
+	box-sizing: inherit
+img
+	max-width : 100%
+a 
+	text-decoration : none
+	&:focus
+		outline: none
+a:hover
+	text-decoration : underline
+body::-webkit-scrollbar
+	display none
+ol, ul 
+	list-style: none;
+blockquote, q
+	quotes: none
+blockquote:before, blockquote:after,
+q:before, q:after
+	content: '';
+	content: none;
+table
+	border-collapse: collapse
+	border-spacing: 0;
+button
+	background: none
+	outline: none
+	border 0px
+	&:focus
+		outline: none
+input[type=text],input[type=password],input[type=number],select,textarea
+	outline none
+	&:focus
+		outline none
+select:disabled,input[type=text]:disabled,input[type=password]:disabled,input[type=submit]:disabled
+	background rgba(#ccc,50%)
+input[type=submit]
+	&:disabled
+		cursor: not-allowed!important
+		&:hover
+			background rgba(#ccc,50%)
+			color:#000
+.btn-reservar:disabled
+	background rgba(#006E9A,50%)!important
+	color:#fff!important
+select:focus
+	outline: none
+h1
+	margin 0
+li
+	list-style none
+//quita los controles de los inputs number T____T
+input[type='number']::-webkit-inner-spin-button, 
+input[type='number']::-webkit-outer-spin-button
+	-webkit-appearance: none
+	margin: 0
+input[type=number]
+	-moz-appearance:textfield
+// reset Select IE10,Mozilla,Chrome
+select::-ms-expand
+	display: none
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
+select
+	-moz-appearance: none
+	-webkit-appearance:none
+fieldset
+	border none
