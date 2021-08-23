@@ -26,6 +26,7 @@ export default class Demo extends Component {
         // developerCallback={(coordenadas, id) => {
         //   console.log(coordenadas, id);
         // }}
+        // mapPath=""
         dark
         tooltip={false}
         tooltipHover={true}

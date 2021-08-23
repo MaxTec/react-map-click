@@ -4,7 +4,7 @@ import { filter, includes, some, omit, pick, map, mapValues } from "lodash";
 import { Container, SearchInput, SearchContainer, SearchItem, SearchItemInner } from "./styles";
 import Badge from "../Badge";
 import Empty from "../Empty";
-const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBlock, ...props }) => {
+const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBlock, level, ...props }) => {
   const [filtered, setFiltered] = useState([]);
   const [searchString, setSearchString] = useState("");
   const inputEl = useRef(null);
@@ -12,6 +12,7 @@ const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBl
     setFiltered(data.levels);
     setSearchString("");
   }, [JSON.stringify(filters)]);
+
   return (
     <>
       <Container>
@@ -46,7 +47,7 @@ const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBl
         <SearchContainer>
           {filtered && filtered.length > 0 ? (
             filtered.map((ele) => {
-              return <SearchItemComponent key={ele.id} data={ele} showTooltip={showTooltip} />;
+              return <SearchItemComponent key={ele.id} data={ele} showTooltip={showTooltip} level={level} changeBlock={changeBlock} />;
             })
           ) : (
             <Empty />
@@ -57,16 +58,13 @@ const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBl
   );
 };
 
-const SearchItemComponent = ({ data, showTooltip }) => {
+const SearchItemComponent = ({ data, showTooltip, level, changeBlock }) => {
   const [open, setOpen] = useState(false);
   return (
     <SearchItem
-      // className='nav-maps--item'
       onClick={(e) => {
         e.stopPropagation();
         setOpen(!open);
-        // agregar boton secundario
-        // changeBlock(ele.id.replace("landmarks-", ""));
       }}
     >
       <SearchItemInner style={{ position: "relative" }}>
@@ -85,7 +83,12 @@ const SearchItemComponent = ({ data, showTooltip }) => {
                   data-category={ele.category}
                   onClick={(e) => {
                     e.stopPropagation();
-                    showTooltip(ele.id);
+                    console.log(ele.id);
+                    // const { id } = data;
+                    const currentBlock = /landmarks-(.*)/.exec(data.id)[1];
+                    if (currentBlock != level) {
+                      changeBlock(currentBlock, ele.id);
+                    }
                   }}
                 >
                   {ele.title}
