@@ -19,7 +19,10 @@ export const SearchInput = styled.input`
 export const Container = styled.div`
   width: 100%;
   max-width: 200px;
-  max-height: 100%;
+  max-height: ${(props) => {
+    return `${props.height}px`;
+  }};
+  padding-bottom: 26px;
   background: #ffffff;
   overflow: hidden;
   border: ${(props) => {

@@ -9,14 +9,22 @@ import Window from "./components/window";
 import ToolTip from "./components/tooltip";
 import useStateCallback from "./hooks/useStateCallback";
 import Search from "./components/Search";
-import { waitForElementToDisplay } from "./utils";
-// import Empty from "./components/Empty";
+import Developer from "./components/Developer";
+import { copyToClipboard } from "./utils/copyToClipboard";
+import { useWindowSize } from "@react-hook/window-size";
 
 const ReactMapClick = (props) => {
   const Viewer = useRef(null);
   const Tooltip = useRef(null);
+  const DeveloperRef = useRef(null);
   const [tool, setTool] = useState(TOOL_NONE);
+  const [developerCoords, setDeveloperCoords] = useState({});
   const [value, setValue] = useStateCallback(INITIAL_VALUE);
+  const [tooltip, setTooltip] = useStateCallback(null);
+  const [currentSelect, setCurrentSelect] = useStateCallback(null);
+  const [fullWidth, setFullWidth] = useState(false);
+  const [width, height] = useWindowSize({ initialWidth: 800, initialHeight: 600 });
+  console.log(width, height);
   const [estado, setEstado] = useState({
     level: props.data.categories[0].id,
     data: props.data,
@@ -24,13 +32,14 @@ const ReactMapClick = (props) => {
     filters: [],
     searchString: "",
     loading: true,
-    currentSelect: null,
-    developerCoords: {},
     showToolbar: true,
   });
 
   useEffect(() => {
+    // Centramos el mapa
     Viewer.current.fitToViewer();
+    // solamente para agregar los filtros que aparecerán en el buscador, se pueden mover al ciclo de vida del componente
+    // y manejar un estado local
     const optionsFilter = Object.keys(omit(props.data.levels[0].locations[0], ["id", "id_huerto", "fill"]));
     if (optionsFilter.length > 0) {
       setEstado({
@@ -43,45 +52,38 @@ const ReactMapClick = (props) => {
   }, []);
   useEffect(() => {
     // console.log("HAY UN CAMBIO EN F o E (horizontal o vertical");
-    if (value.f || value.e) {
-      moveTo();
+    if (value.f && value.e && tooltip) {
+      console.log("SIP");
+      moveTooltipTo();
     }
   }, [value.f, value.e]);
   useEffect(() => {
-    _fitToViewer1();
+    _fitToViewer();
   }, [estado.level]);
   useEffect(() => {
-    console.log("ESTADO USEFECT");
-    console.log(estado);
-
-    if (estado.currentSelect) {
-      const element = checkElementExist(estado.currentSelect.id);
+    if (currentSelect) {
       // if (!element) return false;
-      const getSizes = element.getBBox(); // Necesito un Fallback :c no funciona e IE
-      console.log(getSizes);
-      const x = estado.currentSelect.x || getSizes.x;
-      const y = estado.currentSelect.y || getSizes.y;
-      const zoomScale = getZoomScale(getSizes);
-      zoomToElement(x, y, zoomScale);
+      const { x, y } = currentSelect;
+      // Necesito esto para que funcione mejor :(
+      // const zoomScale = getZoomScale(getSizes);
+      zoomToElement(x, y, 1.5);
     }
-  }, [estado.currentSelect]);
-  console.log(process.env.PUBLIC_URL);
-  /* Read all the available methods in the documentation */
-  const _zoomOnViewerCenter1 = () => Viewer.current.zoomOnViewerCenter(1.2);
-  const _fitSelection1 = () => Viewer.current.fitSelection(40, 40, 200, 200);
-  const _fitToViewer1 = () => Viewer.current.fitToViewer();
+  }, [currentSelect]);
+  // const _zoomOnViewerCenter1 = () => Viewer.current.zoomOnViewerCenter(1.2);
+  // const _fitSelection1 = () => Viewer.current.fitSelection(40, 40, 200, 200);
+  const _fitToViewer = () => Viewer.current.fitToViewer();
 
-  /* keep attention! handling the state in the following way doesn't fire onZoom and onPam hooks */
-  const _zoomOnViewerCenter2 = () => setValue(zoomOnViewerCenter(value, 1.1));
-  const _fitSelection2 = () => setValue(fitSelection(value, 40, 40, 200, 200));
-  const _fitToViewer2 = () => setValue(fitToViewer(value));
+  // const _zoomOnViewerCenter2 = () => setValue(zoomOnViewerCenter(value, 1.1));
+  // const _fitSelection2 = () => setValue(fitSelection(value, 40, 40, 200, 200));
+  // const _fitToViewer2 = () => setValue(fitToViewer(value));
 
   const printMapa = (mapa) => {
-    // podemos validar si es Móvil o no y asi hacer un preventdefault en el click o en el touchend
+    // podemos validar si es Móvil o no y asi hacer un preventDefault en el click o en el touchend
     const { data } = props;
     const getLevel = data.levels.find((ele) => includes(ele.id, mapa.id));
-    const currentWidth = data.mapwidth;
     const extension = getLevel.map.substr(getLevel.map.lastIndexOf(".") + 1).toLowerCase();
+    const maxWidth = width <= props.data.mapwidth ? width : fullWidth ? width : 800;
+    const maxHeight = height <= props.data.mapheight ? height : fullWidth ? height : 600;
     if (extension == "svg") {
       const index = data.categories.findIndex((ele) => ele.id == estado.level);
       return (
@@ -117,7 +119,8 @@ const ReactMapClick = (props) => {
             </>
           }
           render={(content) => {
-            //   console.log
+            const cloned = React.cloneElement(content, { width: maxWidth, height: maxHeight });
+            console.log("RENDERIZA DE NUEZZZZ", cloned);
             return (
               <ReactSVGPanZoom
                 scaleFactorMax={2}
@@ -151,14 +154,14 @@ const ReactMapClick = (props) => {
                 // }}
                 // toolbarProps={{ activeToolColor: "#ffffff" }}
                 value={value}
-                detectWheel={estado.tooltip ? false : true}
+                detectWheel={tooltip ? false : true}
                 // Ya no se necesita, inhabilito PAN cuando existe un Tooltip abierto
                 // onPan={(pan) => {
-                //   this.setState({ value: pan }, () => this.moveTo(pan));
+                //   this.setState({ value: pan }, () => this.moveTooltipTo(pan));
                 // }}
                 // onZoom={(zoom) => {
                 //   console.log(zoom);
-                //   this.setState({ value: zoom }, () => this.moveTo(zoom));
+                //   this.setState({ value: zoom }, () => this.moveTooltipTo(zoom));
                 // }}
                 // onChangeValue={(value) => this.changeValue(value)}
                 onChangeValue={setValue}
@@ -171,28 +174,30 @@ const ReactMapClick = (props) => {
                   if (!props.developer) {
                     return false;
                   }
-                  //   this.setState({ developerCoords: { x: x.toFixed(4), y: y.toFixed(4) } });
+                  setDeveloperCoords({ x: x.toFixed(4), y: y.toFixed(4) });
                 }}
                 /* Habilitar solamente si modo desarrollo esta habiltado
                 por el momento */
                 onClick={(event) => {
                   console.log(event.originalEvent);
                   if (props.developer) {
-                    const node = this.ref.current;
+                    const node = DeveloperRef.current;
                     copyToClipboard(node);
                     console.log(node);
                   }
                 }}
                 // Necesarios para Trabajar bien
-                width={props.data.mapwidth}
-                height={props.data.mapheight}
+                // width={props.data.mapwidth}
+                // height={props.data.mapheight}
+                width={maxWidth}
+                height={maxHeight}
                 // customMiniature={(props) => {
                 //   return <div style={{ position: "absolute", left: 0, zIndex: 900, width: "90px", height: "100px" }}>{props.children}</div>;
                 // }}
                 // miniatureProps={{ position: "left", background: "green", width: 90, height: 70, border: "0px" }}
               >
-                <svg width={props.data.mapwidth} height={props.data.mapheight}>
-                  {content}
+                <svg width={maxWidth} height={maxHeight}>
+                  {cloned}
                 </svg>
               </ReactSVGPanZoom>
             );
@@ -203,27 +208,30 @@ const ReactMapClick = (props) => {
       console.log(extension + "No esta permitido todavía");
     }
   };
+  const getZoomScaleTooltip = () => {
+    const { a } = value;
+    console.log("ZOOM VALUE", Math.round((a + Number.EPSILON) * 100) / 100);
+    if (a > 1) {
+      return (a / 100) * 60;
+    }
+    return 1;
+  };
   const renderMap = () => {
     const { data, level } = estado;
     const currentMap = data.categories.find((ele) => ele.id == level);
-    const Template = props.toolTipTemplate ? React.cloneElement(props.toolTipTemplate, estado.currentSelect) : null;
+    const Template = props.toolTipTemplate ? React.cloneElement(props.toolTipTemplate, currentSelect) : null;
     return (
       <div className='window' style={{ position: "relative", overflow: "hidden" }}>
         <select
           value={estado.level}
           onChange={(e) => {
             const { value } = e.target;
-            setEstado(
-              {
-                ...estado,
-                currentSelect: null,
-                tooltip: null,
-                level: value,
-              }
-              // () => {
-              //   _fitToViewer1();
-              // }
-            );
+            setEstado({
+              ...estado,
+              level: value,
+            });
+            setTooltip(null);
+            setCurrentSelect(null);
           }}
         >
           {data.categories &&
@@ -237,30 +245,30 @@ const ReactMapClick = (props) => {
             })}
         </select>
         {printMapa(currentMap)}
-        {props.developer && <Developer ref={this.ref} data={estado.developerCoords} />}
+        {props.developer && <Developer data={developerCoords} ref={DeveloperRef} />}
+        {/* No lo desaparecemos por que necesitamos saber su tamaño via JS */}
         <ToolTip
           className='tooltip'
           ref={Tooltip}
           closeTooltip={() => {
-            const element = document.getElementById(estado.currentSelect.id);
+            const element = document.getElementById(currentSelect.id);
             element.classList.remove("active-location");
-            setEstado(
-              (prev) => {
-                return { ...prev, currentSelect: null, tooltip: null, tool: TOOL_AUTO };
-              }
-              // () => {
-              //   _fitToViewer1();
-              // }
-            );
+            setEstado((prev) => {
+              return { ...prev, tool: TOOL_AUTO };
+            });
+            setCurrentSelect(null);
+            Viewer.current.reset();
           }}
           style={{
-            // transition: "all 5s ease-in-out",
-            // transform: `scale(${estado.value.a})`,
-            opacity: `${estado.tooltip ? 100 : 0} `,
-            visibility: `${estado.tooltip ? "visible" : "hidden"} `,
+            transitionProperty: "top, left",
+            transitionDuration: ".2s",
+            transitionTimingFunction: "linear",
+            // transform: `scale(${getZoomScaleTooltip()})`,
+            opacity: `${tooltip && currentSelect ? 100 : 0} `,
+            visibility: `${tooltip && currentSelect ? "visible" : "hidden"} `,
             position: "absolute",
-            left: estado.tooltip ? `${estado.tooltip.x}px` : 0,
-            top: estado.tooltip ? `${estado.tooltip.y}px` : 0,
+            left: tooltip ? `${tooltip.x}px` : 0,
+            top: tooltip ? `${tooltip.y}px` : 0,
             // animation: "bounce 1s",
           }}
         >
@@ -270,21 +278,13 @@ const ReactMapClick = (props) => {
     );
   };
   const showTooltip = (id) => {
-    // console.log(id);
-    waitForElementToDisplay(
-      id,
-      () => {
-        console.log("SE EJCUTA EL CALBACK");
-        setCurrentToState(id);
-      },
-      1000,
-      5000
-    );
-    // setCurrentToState(id);
+    setCurrentToState(id);
   };
   const findCurrent = (id) => {
     const { data } = estado;
+    // busco la manzana en la que se encuentra
     const block = head(filter(data.levels, { locations: [{ id: id }] }));
+    // y luego busco la locacion
     const target = block.locations.find((ele) => ele.id == id);
     return target;
   };
@@ -304,7 +304,6 @@ const ReactMapClick = (props) => {
   const checkElementExist = (id) => {
     console.log(id);
     const element = document.getElementById(id);
-    // waitForElementToDisplay;
     console.log(element);
 
     if (!element) {
@@ -320,148 +319,118 @@ const ReactMapClick = (props) => {
     return element;
   };
   const setCurrentToState = (id) => {
-    // console.log(id);
-    // const element = checkElementExist(id);
-    // if (!element) return false;
-    // // const getSizes = element.getBBox(); // Necesito un Fallback :c no funciona e IE
     const current = { ...findCurrent(id), id };
-    // console.log(current);
-    // un aproximado de donde ce centrara el tooltip
-    // const x = current.x || current.sizes.x;
-    // const y = current.y || current.sizes.y;
-    // const zoomScale = getZoomScale(current.sizes);
-    // console.log("ESTADO");
-    // console.log(estado);
-    setEstado({ ...estado, currentSelect: current });
-    // return new Promise((resolve) => {
-    //   setEstado({ ...estado, currentSelect: current }, () => {
-    //     zoomToElement(x, y, zoomScale);
-    //     resolve(current);
-    //   });
-    // });
+
+    setCurrentSelect(current, () => {
+      moveTooltipTo();
+    });
   };
   const zoomToElement = (SVGPointX, SVGPointY, scaleFactor) => {
     return setValue(setPointOnViewerCenter(value, SVGPointX, SVGPointY, scaleFactor));
   };
-  const moveTo = () => {
+  const moveTooltipTo = () => {
+    console.log("SE EJECUTA MOVETooltipTO");
     const { left, top } = getPositionToolTip();
-    setEstado({
-      ...estado,
-      tooltip: {
-        x: left,
-        y: top,
-      },
+    setTooltip({
+      x: left,
+      y: top,
     });
     return false;
   };
   const getPositionToolTip = () => {
-    console.log(value);
     const zoom = parseFloat(value.a.toFixed(4));
     const e = parseFloat(value.e.toFixed(4));
     const f = parseFloat(value.f.toFixed(4));
-    console.log(zoom);
     // TODO: Hacer que el tamaño del tooltip sea dinámico
     const tooltipWidth = Tooltip.current ? Tooltip.current.offsetWidth : 5;
     const tooltipHeight = Tooltip.current ? Tooltip.current.offsetHeight : 5;
     // console.log
-    if (estado.currentSelect) {
-      const { x, y, id } = estado.currentSelect;
-      const element = checkElementExist(id);
-      if (!element) return false;
-      const sizes = element.getBBox();
-      console.log(sizes);
+    if (currentSelect) {
+      const { x, y } = currentSelect;
+      // const sizes = element.getBBox();
+      // console.log(sizes);
       const padding = parseFloat(window.getComputedStyle(Tooltip.current, null).getPropertyValue("padding")) || 5;
-      console.log("padding es: " + padding);
-      const sumX = (x || sizes.x) * zoom;
-      const sumY = (y || sizes.y) * zoom;
-      let cx = x ? sumX - tooltipWidth / 2 + e : sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
-      let cy = y ? sumY - tooltipHeight + f : sumY + (sizes.height * zoom) / 2 - tooltipHeight + padding + f;
-      console.log({ left: cx, top: cy });
+      const sumX = x * zoom;
+      const sumY = y * zoom;
+      // const sumX = (x || sizes.x) * zoom;
+      // const sumY = (y || sizes.y) * zoom;
+      let cx = x ? sumX - tooltipWidth / 2 + e : sumX / 2 - tooltipWidth / 2 + e;
+      let cy = y ? sumY - tooltipHeight + f : sumY / 2 - tooltipHeight + padding + f;
+      // let cx = x ? sumX - tooltipWidth / 2 + e : sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
+      // let cy = y ? sumY - tooltipHeight + f : sumY + (sizes.height * zoom) / 2 - tooltipHeight + padding + f;
+      // console.log({ left: cx, top: cy });
       return { left: cx, top: cy };
     }
     return false;
   };
+  const handleCheckChildElement = (event) => {
+    let filters = estado.filters;
+    filters.forEach((item) => {
+      const length = estado.filters.filter((ele) => ele.isChecked == true).map((ele) => ele.value);
+      if (item.value === event.target.value) item.isChecked = length.length > 1 ? event.target.checked : true;
+    });
+    setEstado({ ...estado, filters: filters });
+  };
   const { theme } = props;
   return (
     <div>
-      {/* <button className='btn' onClick={() => _zoomOnViewerCenter1()}>
-        Zoom on center (mode 1)
-      </button>
-      <button className='btn' onClick={() => _fitSelection1()}>
-        Zoom area 200x200 (mode 1)
-      </button>
-      <button className='btn' onClick={() => _fitToViewer1()}>
-        Fit (mode 1)
-      </button>
-      <hr />
-
-      <button className='btn' onClick={() => _zoomOnViewerCenter2()}>
-        Zoom on center (mode 2)
-      </button>
-      <button className='btn' onClick={() => _fitSelection2()}>
-        Zoom area 200x200 (mode 2)
-      </button>
-      <button className='btn' onClick={() => _fitToViewer2()}>
-        Fit (mode 2)
-      </button>
-      <hr /> */}
       <Window theme={theme ? theme : undefined} dark>
         {/* {renderMap()} */}
+        {/* TODO: pasar todo a styled Components */}
         <div style={{ display: "flex", maxHeight: "100%" }}>
-          <div className='body' style={{ position: "relative" }}>
+          <div
+            className='body'
+            style={{
+              position: fullWidth ? "fixed" : "relative",
+              top: 0,
+              left: 0,
+              overflow: "hidden",
+              height: height <= 600 ? height : fullWidth ? height : 600,
+              width: width <= 800 ? width : fullWidth ? width : 800,
+            }}
+          >
             {renderMap()}
             <div className='test'>
-              {/* <button
+              <button
                 onClick={() => {
-                  Viewer.reset();
-                  // if (this.state.currentSelect) {
-                  //   // TODO Create RemoveToolTip
-                  //   const element = document.getElementById(this.state.currentSelect.id);
-                  //   element.classList.remove("active-location");
-                  //   this.setState(
-                  //     {
-                  //       currentSelect: null,
-                  //       tooltip: null,
-                  //       tool: TOOL_AUTO,
-                  //     },
-                  //     () => {
-                  //       this.fitToViewer();
-                  //     }
-                  //   );
-                  // }
+                  Viewer.current.reset();
                 }}
                 style={{ position: "absolute", top: 0, right: 0, zIndex: 999 }}
               >
                 RESET ZOOM
-              </button> */}
-              {/* <button
-                style={{ position: "absolute", top: 25, right: 0, zIndex: 999 }}
-                disabled={value.a && parseFloat(value.a.toFixed(2)) >= 1.9}
+              </button>
+              <button
+                onClick={() => {
+                  setFullWidth(!fullWidth);
+                }}
+                style={{ position: "absolute", top: 0, right: 130, zIndex: 999 }}
+              >
+                {fullWidth ? "Minimizar" : "Maximizar"}
+              </button>
+              <button
+                style={{ position: "absolute", bottom: 25, right: 100, zIndex: 999 }}
+                disabled={value.a && parseFloat(value.a.toFixed(2)) >= 1.8}
                 onClick={(e) => {
-                  if (parseFloat(value.a.toFixed(2)) <= 1.9) {
-                    console.log(parseFloat(value.a.toFixed(2)));
-                    _zoomOnViewerCenter1();
-                    e.preventDefault();
-                  }
+                  e.preventDefault();
+                  Viewer.current.zoomOnViewerCenter(1.1);
                 }}
               >
                 ZOOM IN
-              </button> */}
-              {/* <button
-                style={{ position: "absolute", top: 45, right: 0, zIndex: 999 }}
+              </button>
+              <button
+                style={{ position: "absolute", bottom: 25, right: 10, zIndex: 999 }}
                 disabled={value.a && parseFloat(value.a.toFixed(2)) <= 1.1}
                 onClick={(e) => {
-                  if (parseFloat(value.a.toFixed(2)) >= 1.1) {
-                    zoomOnViewerCenter(0.9);
-                    e.stopPropagation();
-                  }
+                  e.preventDefault();
+                  Viewer.current.zoomOnViewerCenter(0.9);
                 }}
               >
                 ZOOM OUT
-              </button> */}
+              </button>
             </div>
           </div>
           <Search
+            height={height <= 600 ? height : 600}
             data={estado.data}
             filtered={estado.filtered}
             level={estado.level}
@@ -471,16 +440,14 @@ const ReactMapClick = (props) => {
             changeBlock={(value, id) => {
               setEstado({
                 ...estado,
-                currentSelect: null,
-                tooltip: null,
                 level: value,
               });
-              setTimeout(() => {
-                showTooltip(id);
-              }, 300);
+              setTooltip(null);
+              setCurrentSelect(null);
+              showTooltip(id);
             }}
             filters={estado.filters}
-            // handleCheckChieldElement={this.handleCheckChieldElement}
+            handleCheckChildElement={handleCheckChildElement}
           />
         </div>
       </Window>

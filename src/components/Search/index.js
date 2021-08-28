@@ -4,7 +4,7 @@ import { filter, includes, some, omit, pick, map, mapValues } from "lodash";
 import { Container, SearchInput, SearchContainer, SearchItem, SearchItemInner } from "./styles";
 import Badge from "../Badge";
 import Empty from "../Empty";
-const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBlock, level, ...props }) => {
+const Search = ({ filters, data, handleCheckChildElement, showTooltip, height, changeBlock, level, ...props }) => {
   const [filtered, setFiltered] = useState([]);
   const [searchString, setSearchString] = useState("");
   const inputEl = useRef(null);
@@ -15,10 +15,10 @@ const Search = ({ filters, data, handleCheckChieldElement, showTooltip, changeBl
 
   return (
     <>
-      <Container>
+      <Container height={height}>
         <div className='filter-btns'>
           {filters.map((val, i) => {
-            return <Checkbox key={val.id} value={val.id} checked={val.isChecked} handleChange={handleCheckChieldElement} />;
+            return <Checkbox key={val.id} value={val.id} checked={val.isChecked} handleChange={handleCheckChildElement} />;
           })}
         </div>
         <form action=''>
@@ -88,6 +88,8 @@ const SearchItemComponent = ({ data, showTooltip, level, changeBlock }) => {
                     const currentBlock = /landmarks-(.*)/.exec(data.id)[1];
                     if (currentBlock != level) {
                       changeBlock(currentBlock, ele.id);
+                    } else {
+                      showTooltip(ele.id);
                     }
                   }}
                 >

@@ -30,7 +30,7 @@ const GlobalStyle = createGlobalStyle`
   }
   //clase requerida para animaciones en mapas
   /* .map-container > svg > g{
-    transition:transform 0.35s ease-in-out
+    transition:transform 0.25s ease-in-out
   } */
 `;
 const Window = ({ theme, ...props }) => {

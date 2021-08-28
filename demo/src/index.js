@@ -22,7 +22,7 @@ export default class Demo extends Component {
   render() {
     return (
       <ReactMapClick
-        // developer={true}
+        developer={true}
         // developerCallback={(coordenadas, id) => {
         //   console.log(coordenadas, id);
         // }}

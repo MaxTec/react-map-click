@@ -36,6 +36,7 @@
     "react-component"
   ],
   "dependencies": {
+    "@react-hook/window-size": "^3.0.7",
     "dompurify": "^2.2.7",
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
