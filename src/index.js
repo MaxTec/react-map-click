@@ -53,7 +53,6 @@ const ReactMapClick = (props) => {
   useEffect(() => {
     // console.log("HAY UN CAMBIO EN F o E (horizontal o vertical");
     if (value.f && value.e && tooltip) {
-      console.log("SIP");
       moveTooltipTo();
     }
   }, [value.f, value.e]);
@@ -63,10 +62,13 @@ const ReactMapClick = (props) => {
   useEffect(() => {
     if (currentSelect) {
       // if (!element) return false;
-      const { x, y } = currentSelect;
-      // Necesito esto para que funcione mejor :(
-      // const zoomScale = getZoomScale(getSizes);
-      zoomToElement(x, y, 1.5);
+      const { id } = currentSelect;
+      const element = document.getElementById(id);
+      const getSizes = element.getBBox();
+      const { x, y } = getSizes;
+      console.log("POINTS TO CENTER", x, y);
+      const zoomScale = getZoomScale(getSizes);
+      zoomToElement(x, y, zoomScale);
     }
   }, [currentSelect]);
   // const _zoomOnViewerCenter1 = () => Viewer.current.zoomOnViewerCenter(1.2);
@@ -120,7 +122,6 @@ const ReactMapClick = (props) => {
           }
           render={(content) => {
             const cloned = React.cloneElement(content, { width: maxWidth, height: maxHeight });
-            console.log("RENDERIZA DE NUEZZZZ", cloned);
             return (
               <ReactSVGPanZoom
                 scaleFactorMax={2}
@@ -346,19 +347,19 @@ const ReactMapClick = (props) => {
     const tooltipHeight = Tooltip.current ? Tooltip.current.offsetHeight : 5;
     // console.log
     if (currentSelect) {
-      const { x, y } = currentSelect;
-      // const sizes = element.getBBox();
-      // console.log(sizes);
+      const { x, y, id } = currentSelect;
+      const element = document.getElementById(id);
+      const sizes = element.getBBox();
+      console.log(sizes);
       const padding = parseFloat(window.getComputedStyle(Tooltip.current, null).getPropertyValue("padding")) || 5;
-      const sumX = x * zoom;
-      const sumY = y * zoom;
-      // const sumX = (x || sizes.x) * zoom;
-      // const sumY = (y || sizes.y) * zoom;
-      let cx = x ? sumX - tooltipWidth / 2 + e : sumX / 2 - tooltipWidth / 2 + e;
-      let cy = y ? sumY - tooltipHeight + f : sumY / 2 - tooltipHeight + padding + f;
-      // let cx = x ? sumX - tooltipWidth / 2 + e : sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
-      // let cy = y ? sumY - tooltipHeight + f : sumY + (sizes.height * zoom) / 2 - tooltipHeight + padding + f;
-      // console.log({ left: cx, top: cy });
+      // const sumX = x * zoom;
+      // const sumY = y * zoom;
+      const sumX = (sizes.x || x) * zoom;
+      const sumY = (sizes.y || y) * zoom;
+      // let cx = x ? sumX - tooltipWidth / 2 + e : sumX / 2 - tooltipWidth / 2 + e;
+      // let cy = y ? sumY - tooltipHeight + f : sumY / 2 - tooltipHeight + padding + f;
+      let cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
+      let cy = sumY + (sizes.height * zoom) / 2 - tooltipHeight + padding + f;
       return { left: cx, top: cy };
     }
     return false;
