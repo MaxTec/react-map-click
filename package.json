@@ -23,9 +23,9 @@
     "react": "^17.0.2"
   },
   "devDependencies": {
-    "nwb": "0.25.x",
+    "nwb": "^0.25.2",
     "nwb-stylus": "^0.7.2",
-    "react": "*",
+    "react": "17.0.2",
     "react-dom": "^17.0.2"
   },
   "author": "MaxTec",
@@ -37,13 +37,13 @@
   ],
   "dependencies": {
     "@react-hook/window-size": "^3.0.7",
-    "dompurify": "^2.2.7",
+    "dompurify": "^2.3.1",
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react-svg-pan-zoom": "^3.10.0",
     "react-svg-pan-zoom-loader": "^1.4.1",
-    "react-virtualized-auto-sizer": "^1.0.5",
-    "styled-components": "^5.2.3",
+    "react-virtualized-auto-sizer": "^1.0.6",
+    "styled-components": "^5.3.1",
     "styled-reset": "^4.3.4"
   }
 }
