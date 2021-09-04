@@ -17,7 +17,10 @@
     "start": "nwb serve-react-demo",
     "test": "nwb test-react",
     "test:coverage": "nwb test-react --coverage",
-    "test:watch": "nwb test-react --server"
+    "test:watch": "nwb test-react --server",
+    "lint": "eslint ./src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "prepare": "husky install"
   },
   "peerDependencies": {
     "react": "^17.0.2"
@@ -26,6 +29,17 @@
     "nwb": "^0.25.2",
     "nwb-stylus": "^0.7.2",
     "react": "17.0.2",
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.1.2",
+    "prettier": "^2.3.2",
     "react-dom": "^17.0.2"
   },
   "author": "MaxTec",

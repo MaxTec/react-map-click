@@ -1,0 +1,29 @@
+{
+  "files.exclude": {
+    // ".commitlintrc.js": true,
+    // ".editorconfig": true,
+    // ".eslintignore": true,
+    // ".eslintrc.js": true,
+    // ".eslintrc": true,
+    // ".husky": true,
+    // ".lintstagedrc.json": true,
+    // ".prettierignore": true,
+    // ".prettierrc": true,
+    // ".vscode": false,
+    // "**/node_modules/": true,
+    // "*git*": true,
+    // "*lock*": true, // lock files
+    // "tests/": true,
+    // "demo/": true,
+    // "es/": true,
+    // "lib/": true,
+    // "umd/": true
+  },
+  // https://thisismanta.github.io/stylus-supremacy/#options
+  "stylusSupremacy.insertSemicolons": false,
+  "stylusSupremacy.insertBraces": false,
+  "stylusSupremacy.selectorSeparator": ",\n",
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  }
+}
