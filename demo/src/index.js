@@ -22,7 +22,7 @@ export default class Demo extends Component {
   render() {
     return (
       <ReactMapClick
-        developer={true}
+        // developer={true}
         // developerCallback={(coordenadas, id) => {
         //   console.log(coordenadas, id);
         // }}
@@ -30,7 +30,7 @@ export default class Demo extends Component {
         dark
         tooltip={false}
         tooltipHover={true}
-        toolTipTemplate={<Template2 />}
+        // toolTipTemplate={<Template2 />}
         onLocationOpened={(ele) => {
           console.log(ele);
         }}

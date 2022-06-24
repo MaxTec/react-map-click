@@ -26,9 +26,6 @@
     "react": "^17.0.2"
   },
   "devDependencies": {
-    "nwb": "^0.25.2",
-    "nwb-stylus": "^0.7.2",
-    "react": "17.0.2",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "eslint": "^7.32.0",
@@ -39,7 +36,10 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
+    "nwb": "^0.25.2",
+    "nwb-stylus": "^0.7.2",
     "prettier": "^2.3.2",
+    "react": "17.0.2",
     "react-dom": "^17.0.2"
   },
   "author": "MaxTec",
@@ -55,9 +55,10 @@
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react-svg-pan-zoom": "^3.10.0",
-    "react-svg-pan-zoom-loader": "^1.4.1",
+    "react-svgmt": "^1.2.0",
     "react-virtualized-auto-sizer": "^1.0.6",
     "styled-components": "^5.3.1",
-    "styled-reset": "^4.3.4"
+    "styled-reset": "^4.3.4",
+    "version": "^0.1.2"
   }
 }
