@@ -1,15 +1,20 @@
-import React, { useState } from "react";
-import reset from "styled-reset";
-import { ThemeProvider, createGlobalStyle } from "styled-components";
-import { lightTheme, darkTheme } from "./theme";
-import WindowNavBar from "./navbar";
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import reset from 'styled-reset';
+
+import WindowNavBar from './navbar';
+import { darkTheme, lightTheme } from './theme';
+
 const GlobalStyle = createGlobalStyle`
  ${reset}
+ @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
  *, *:before, *:after{
    box-sizing:border-box;
  }
   body {
     background-color: tomato;
+    font-family:  'Roboto', sans-serif;
   }
   ul{
     list-style:none;
@@ -33,6 +38,20 @@ const GlobalStyle = createGlobalStyle`
     transition:transform 0.25s ease-in-out
   } */
 `;
+const BodyWindow = styled.div`
+  width: ${(props) => {
+    console.log(props);
+    return props.width + 3;
+  }}px;
+  height: ${(props) => props.height + 10}px;
+  border-radius: 0px 0px 5px 5px;
+  color: ${(props) => props.theme.primaryColor};
+  border: 2px solid ${(props) => props.theme.primaryColor};
+  position: relative;
+  overflow: hidden;
+  margin: auto;
+`;
+// aca puedo recibir las props
 const Window = ({ theme, ...props }) => {
   // const mergedTheme = theme ? { ...lightTheme, ...theme } : lightTheme;
   const [isDark, setIsDark] = useState(false);
@@ -40,13 +59,18 @@ const Window = ({ theme, ...props }) => {
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <GlobalStyle />
       <WindowNavBar
+        {...props}
         toggleTheme={() => {
           setIsDark(!isDark);
         }}
       />
-      {props.children}
+      <BodyWindow {...props}>{props.children}</BodyWindow>
     </ThemeProvider>
   );
 };
 
+Window.propTypes = {
+  theme: PropTypes.obj,
+  children: PropTypes.node,
+};
 export default Window;
