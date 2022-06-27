@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import reset from 'styled-reset';
 
@@ -48,24 +48,26 @@ const BodyWindow = styled.div`
   color: ${(props) => props.theme.primaryColor};
   border: 2px solid ${(props) => props.theme.primaryColor};
   position: relative;
-  overflow: hidden;
   margin: auto;
+  // display: flex;
 `;
 // aca puedo recibir las props
 const Window = ({ theme, ...props }) => {
   // const mergedTheme = theme ? { ...lightTheme, ...theme } : lightTheme;
   const [isDark, setIsDark] = useState(false);
   return (
-    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-      <GlobalStyle />
-      <WindowNavBar
-        {...props}
-        toggleTheme={() => {
-          setIsDark(!isDark);
-        }}
-      />
-      <BodyWindow {...props}>{props.children}</BodyWindow>
-    </ThemeProvider>
+    <React.Fragment>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <WindowNavBar
+          {...props}
+          toggleTheme={() => {
+            setIsDark(!isDark);
+          }}
+        />
+        <BodyWindow {...props}>{props.children}</BodyWindow>
+      </ThemeProvider>
+    </React.Fragment>
   );
 };
 

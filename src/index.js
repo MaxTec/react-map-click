@@ -2,7 +2,7 @@
 /* eslint-disable object-property-newline */
 import { filter, head } from 'lodash';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   INITIAL_VALUE,
   ReactSVGPanZoom,
@@ -11,11 +11,12 @@ import {
 } from 'react-svg-pan-zoom';
 import { SvgLoader, SvgProxy } from 'react-svgmt';
 
+import Search from './components/Search';
 import ToolTip, { TooltipTemplate } from './components/tooltip';
 import Window from './components/window';
 import useStateCallback from './hooks/useStateCallback';
 
-const ReactMapClick = ({ data, theme }) => {
+const ReactMapClick = ({ data, theme, showSearch }) => {
   const { mapheight, mapwidth } = data;
   const Viewer = useRef(null);
   const Tooltip = useRef(null);
@@ -48,13 +49,13 @@ const ReactMapClick = ({ data, theme }) => {
     });
     return res || [];
   };
-  // const changeBlockandLot = (block, lote = '') => {
-  //   setisMapLoaded(false)
-  //   const getRow = getCurrentBlock(block);
-  //   console.log(getRow)
-  //   setCurrentMap(getRow);
-  //   setSelected(findLot('m11lote3'));
-  // };
+  const changeBlockandLot = (block, lote = '') => {
+    setisMapLoaded(false);
+    const getRow = getCurrentBlock(block);
+    console.log(getRow);
+    setCurrentMap(getRow);
+    setSelected(findLot(lote));
+  };
   const changeBlock = (block) => {
     setisMapLoaded(false);
     setSelected(null);
@@ -63,9 +64,6 @@ const ReactMapClick = ({ data, theme }) => {
     setCurrentMap(getRow);
     _fitToViewer();
   };
-  // const Template = props.toolTipTemplate
-  //   ? React.cloneElement(props.toolTipTemplate, selected)
-  //   : null;
   const getPositionToolTip = () => {
     const zoom = parseFloat(value.a.toFixed(4));
     const e = parseFloat(value.e.toFixed(4));
@@ -85,14 +83,8 @@ const ReactMapClick = ({ data, theme }) => {
             .getComputedStyle(Tooltip.current, null)
             .getPropertyValue('padding')
         ) || 5;
-      // const sumX = x * zoom;
-      // const sumY = y * zoom;
-      // const sumX = sizes.x * zoom;
       const sumX = (sizes.x || x) * zoom;
-      // const sumY = sizes.y * zoom;
       const sumY = (sizes.y || y) * zoom;
-      // let cx = x ? sumX - tooltipWidth / 2 + e : sumX / 2 - tooltipWidth / 2 + e;
-      // let cy = y ? sumY - tooltipHeight + f : sumY / 2 - tooltipHeight + padding + f;
       let cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
       let cy = sumY + (sizes.height * zoom) / 2 - tooltipHeight + padding + f;
       return { left: cx, top: cy };
@@ -118,7 +110,6 @@ const ReactMapClick = ({ data, theme }) => {
     return element.getBBox();
   };
   const findLot = (id) => {
-    // const { data } = estado;
     // busco la manzana en la que se encuentra
     const block = head(filter(data.levels, { locations: [{ id: id }] }));
     // y luego busco la locacion
@@ -126,113 +117,122 @@ const ReactMapClick = ({ data, theme }) => {
     return target;
   };
   return (
-    <Window
-      theme={theme ? theme : undefined}
-      dark
-      height={mapheight}
-      width={mapwidth}
-    >
-      <select
-        value={currentMap.id}
-        onChange={(e) => {
-          const { value } = e.target;
-          changeBlock(value);
-        }}
-      >
-        {data.levels &&
-          data.levels.length > 1 &&
-          data.levels.map((ele, index) => {
-            return (
-              <option key={index} value={ele.id}>
-                {ele.title}
-              </option>
-            );
-          })}
-      </select>
-      {/* <button
-        type="button"
-        onClick={() => {
-          changeBlockandLot('landmarks-mz11', 'm11lote3');
-        }}
-      >
-        BUTTON CHAANGE BLOCK and LOT
-      </button> */}
-      <ReactSVGPanZoom
-        scaleFactorMax={2}
-        detectAutoPan={false}
-        scaleFactor={1}
-        scaleFactorMin={1}
-        disableDoubleClickZoomWithToolAuto={true}
-        SVGBackground="transparent"
-        // className="map-container"
-        SVGStyle={{ transition: 'transform 1s ease-in-out' }}
-        id="viewer1"
-        ref={Viewer}
-        tool={tool}
-        onChangeTool={(tool) => {
-          setTool(tool);
-        }}
-        value={value}
-        onChangeValue={setValue}
-        width={mapwidth}
+    <React.Fragment>
+      <Window
+        theme={theme ? theme : undefined}
+        dark
         height={mapheight}
+        width={mapwidth}
       >
-        <svg width={mapwidth} height={mapheight}>
-          <SvgLoader
-            width={mapwidth}
-            height={mapheight}
-            path={currentMap.map}
-            onSVGReady={() => {
-              setisMapLoaded(true);
+        <select
+          value={currentMap.id}
+          onChange={(e) => {
+            const { value } = e.target;
+            changeBlock(value);
+          }}
+        >
+          {data.levels &&
+            data.levels.length > 1 &&
+            data.levels.map((ele, index) => {
+              return (
+                <option key={index} value={ele.id}>
+                  {ele.title}
+                </option>
+              );
+            })}
+        </select>
+        <ReactSVGPanZoom
+          scaleFactorMax={2}
+          detectAutoPan={false}
+          scaleFactor={1}
+          scaleFactorMin={1}
+          disableDoubleClickZoomWithToolAuto={true}
+          SVGBackground="transparent"
+          // className="map-container"
+          SVGStyle={{ transition: 'transform 1s ease-in-out' }}
+          id="viewer1"
+          ref={Viewer}
+          tool={tool}
+          onChangeTool={(tool) => {
+            setTool(tool);
+          }}
+          value={value}
+          onChangeValue={setValue}
+          width={mapwidth}
+          height={mapheight}
+        >
+          <svg width={mapwidth} height={mapheight}>
+            <SvgLoader
+              width={mapwidth}
+              height={mapheight}
+              path={currentMap.map}
+              onSVGReady={() => {
+                setisMapLoaded(true);
+              }}
+            >
+              {currentMap.locations.map((ele) => (
+                <SvgProxy
+                  key={ele.id}
+                  selector={`#${ele.id}`}
+                  // selector="[id^=landmark] > *"
+                  fill={currentMap.fill || '#8e44ad'}
+                  onClick={(e) => {
+                    const { id } = e.target;
+                    setSelected(findLot(id));
+                    // console.log(getPositionToolTip());
+                    // if (id) showTooltip(id);
+                  }}
+                />
+              ))}
+            </SvgLoader>
+          </svg>
+        </ReactSVGPanZoom>
+        {showSearch && (
+          <Search
+            height={mapheight <= 600 ? mapheight : 600}
+            data={data}
+            filtered={data}
+            level={currentMap.id}
+            showTooltip={(id) => {
+              setSelected(findLot(id));
             }}
-          >
-            {currentMap.locations.map((ele) => (
-              <SvgProxy
-                key={ele.id}
-                selector={`#${ele.id}`}
-                // selector="[id^=landmark] > *"
-                fill={currentMap.fill || '#8e44ad'}
-                onClick={(e) => {
-                  const { id } = e.target;
-                  setSelected(findLot(id));
-                  // console.log(getPositionToolTip());
-                  // if (id) showTooltip(id);
-                }}
-              />
-            ))}
-          </SvgLoader>
-        </svg>
-      </ReactSVGPanZoom>
-      <ToolTip
-        className="tooltip"
-        ref={Tooltip}
-        closeTooltip={() => {
-          // const element = document.getElementById(currentSelect.id);
-          // element.classList.remove('active-location');
-          // setEstado((prev) => {
-          //   return { ...prev, tool: TOOL_AUTO };
-          // });
-          // setCurrentSelect(null);
-          setSelected(false);
-          setTooltip(null);
-          Viewer.current.reset();
-        }}
-        style={{
-          transitionProperty: 'top, left',
-          transitionDuration: '.2s',
-          transitionTimingFunction: 'linear',
-          // transform: `scale(${getZoomScaleTooltip()})`,
-          opacity: `${tooltip && selected ? 100 : 0} `,
-          visibility: `${tooltip && selected ? 'visible' : 'hidden'} `,
-          position: 'absolute',
-          left: tooltip ? `${tooltip.x}px` : 0,
-          top: tooltip ? `${tooltip.y}px` : 0,
-          // animation: "bounce 1s",
-        }}
-      >
-        <TooltipTemplate {...selected} />
-      </ToolTip>
-    </Window>
+            changeBlock={(mz, lot) => {
+              changeBlockandLot(mz, lot);
+            }}
+          />
+        )}
+
+        <ToolTip
+          className="tooltip"
+          ref={Tooltip}
+          closeTooltip={() => {
+            // const element = document.getElementById(currentSelect.id);
+            // element.classList.remove('active-location');
+            // setEstado((prev) => {
+            //   return { ...prev, tool: TOOL_AUTO };
+            // });
+            // setCurrentSelect(null);
+            setSelected(false);
+            setTooltip(null);
+            Viewer.current.reset();
+          }}
+          style={{
+            transitionProperty: 'top, left',
+            transitionDuration: '.2s',
+            transitionTimingFunction: 'linear',
+            // transform: `scale(${getZoomScaleTooltip()})`,
+            opacity: `${tooltip && selected ? 100 : 0} `,
+            visibility: `${tooltip && selected ? 'visible' : 'hidden'} `,
+            position: 'absolute',
+            left: tooltip ? `${tooltip.x}px` : 0,
+            top: tooltip ? `${tooltip.y}px` : 0,
+            // animation: "bounce 1s",
+          }}
+        >
+          <TooltipTemplate {...selected} />
+        </ToolTip>
+      </Window>
+    </React.Fragment>
   );
 };
 ReactMapClick.propTypes = {
@@ -243,10 +243,18 @@ ReactMapClick.propTypes = {
     body: PropTypes.string,
   }),
   data: PropTypes.object.isRequired,
+  showSearch: PropTypes.bool,
   onSelect: PropTypes.func,
   onChange: PropTypes.func,
   onLocationOpened: PropTypes.func,
   tooltipHover: PropTypes.bool,
 };
 
+ReactMapClick.defaultProps = {
+  data: [],
+  developer: false,
+  tooltipHover: false,
+  dark: false,
+  showSearch: true,
+};
 export default ReactMapClick;

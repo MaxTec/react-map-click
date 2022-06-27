@@ -30,7 +30,7 @@
     "eqeqeq": "error",
     "max-depth": ["error", 3],
     "max-params": ["error", 6],
-    "complexity": ["error", 10],
+    "complexity": ["error", 12],
     "object-property-newline": "error",
     "array-element-newline": 0,
     "no-prototype-builtins": "off",

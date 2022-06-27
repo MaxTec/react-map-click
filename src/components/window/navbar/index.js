@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
 // Define our button
 const NavbarWindow = styled.div`
@@ -20,21 +21,24 @@ const WindowNavBar = (props) => {
   const d = new Date();
   let hour = d.getHours();
   return (
-    <NavbarWindow {...props}>
-      <div className="navbar-window__inner">
-        <div className="navbar-window__title">
-          Hola, Buenas {hour > 12 ? (hour > 8 ? 'Noches;' : 'Tardes') : 'Dias'}
-          <span>{hour > 12 ? '&#127769;' : '&#127774;'}</span>
-          <button
-            onClick={() => {
-              props.toggleTheme();
-            }}
-          >
-            Toggle theme
-          </button>
+    <React.Fragment>
+      <NavbarWindow {...props}>
+        <div className="navbar-window__inner">
+          <div className="navbar-window__title">
+            Hola, Buenas{' '}
+            {hour > 12 ? (hour > 20 ? 'Noches;' : 'Tardes') : 'Dias'}
+            <span>{hour > 12 ? '&#127769;' : '&#127774;'}</span>
+            <button
+              onClick={() => {
+                props.toggleTheme();
+              }}
+            >
+              Toggle theme
+            </button>
+          </div>
         </div>
-      </div>
-    </NavbarWindow>
+      </NavbarWindow>
+    </React.Fragment>
   );
 };
 WindowNavBar.propTypes = {

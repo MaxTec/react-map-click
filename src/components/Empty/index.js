@@ -1,5 +1,6 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
+
 export const Container = styled.div`
   width: 100%;
   max-width: 200px;
@@ -14,7 +15,11 @@ export const Container = styled.div`
   }};
 `;
 const Empty = () => {
-  return <Container>No se encontró ningún elemento</Container>;
+  return (
+    <React.Fragment>
+      <Container>No se encontró ningún elemento</Container>
+    </React.Fragment>
+  );
 };
 
 export default Empty;
