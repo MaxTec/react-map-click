@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
+
+import Button from '../../Button';
 // Define our button
 const NavbarWindow = styled.div`
   font-size: 1em;
@@ -20,6 +22,7 @@ const WindowNavBar = (props) => {
   // !NOTA: pasa como prop
   const d = new Date();
   let hour = d.getHours();
+  // ! NOTE: migrate all dictionary words to external file
   return (
     <React.Fragment>
       <NavbarWindow {...props}>
@@ -27,14 +30,15 @@ const WindowNavBar = (props) => {
           <div className="navbar-window__title">
             Hola, Buenas{' '}
             {hour > 12 ? (hour > 20 ? 'Noches;' : 'Tardes') : 'Dias'}
-            <span>{hour > 12 ? '&#127769;' : '&#127774;'}</span>
-            <button
+            {hour > 7 ? <span>&#127769;</span> : <span>&#127774;</span>}
+            <Button
+              width="200px"
               onClick={() => {
                 props.toggleTheme();
               }}
             >
               Toggle theme
-            </button>
+            </Button>
           </div>
         </div>
       </NavbarWindow>
