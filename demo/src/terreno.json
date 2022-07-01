@@ -55,11 +55,11 @@
           "category": "mz1",
           "fill": "#8e44ad",
           "link": "",
-          "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 880,000.00</div><div>Estado: Huerto reservado</div>",
+          "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 880,000.00</div><div>Estado: Huerto reservado lorem aew q3rg wrg w rgw4 grwervwrvwervwerv wervwervwrev wervwervwr vwrv owhecowecoiew oweihcowehcoweh woechowecoiwe woeihcowie</div>",
           "id_huerto": "1",
           "huerto": "1",
-          "x": "246",
-          "y": "270"
+          "x": "116",
+          "y": "162"
         },
         {
           "id": "m1lote2",
@@ -70,8 +70,8 @@
           "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 1,610,000.00</div><div>Estado: Huerto libre</div>",
           "id_huerto": "2",
           "huerto": "2",
-          "x": "324",
-          "y": "356"
+          "x": "213",
+          "y": "182"
         },
         {
           "id": "m1lote3",
@@ -82,8 +82,8 @@
           "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 1,610,000.00</div><div>Estado: Huerto libre</div>",
           "id_huerto": "3",
           "huerto": "3",
-          "x": "435",
-          "y": "296"
+          "x": "315",
+          "y": "202"
         },
         {
           "id": "m1lote4",
@@ -94,8 +94,8 @@
           "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 1,610,000.00</div><div>Estado: Huerto libre</div>",
           "id_huerto": "4",
           "huerto": "4",
-          "x": "550",
-          "y": "338"
+          "x": "424",
+          "y": "225"
         }
       ],
       "map": "https://huertoslaceiba.com/public/assets/img/mapas/hlc/mz1.svg"
@@ -113,8 +113,8 @@
           "description": "<div>Superficie: 405.55 m<sup>2</sup></div><div>Precio: $ 486,660.00</div><div>Estado: Huerto libre</div>",
           "id_huerto": "766",
           "huerto": "1b",
-          "x": "0.5069",
-          "y": "0.8555"
+          "x": "400",
+          "y": "508"
         },
         {
           "id": "m2lote2",
@@ -485,8 +485,8 @@
           "description": "<div>Superficie: 334.60 m<sup>2</sup></div><div>Precio: $ 128,486.40</div><div>Estado: Huerto en proceso de pago</div><div><a href=\"./ventas/historial/559/pagos\"><i class=\"fa fa-user\" aria-hidden=\"true\"></i>JUANA  CHIMAL CAAMAL</a></div>",
           "id_huerto": "21",
           "huerto": "17",
-          "x": "0.2947",
-          "y": "0.1592"
+          "x": "214",
+          "y": "64"
         },
         {
           "id": "m2lote18a",

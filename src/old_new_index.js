@@ -219,7 +219,13 @@ const ReactMapClick = (props) => {
                 // customMiniature={(props) => {
                 //   return <div style={{ position: "absolute", left: 0, zIndex: 900, width: "90px", height: "100px" }}>{props.children}</div>;
                 // }}
-                // miniatureProps={{ position: "left", background: "green", width: 90, height: 70, border: "0px" }}
+                miniatureProps={{
+                  position: 'left',
+                  background: 'green',
+                  width: 90,
+                  height: 70,
+                  border: '0px',
+                }}
               >
                 <svg width={maxWidth} height={maxHeight}>
                   {cloned}

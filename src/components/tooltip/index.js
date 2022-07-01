@@ -1,24 +1,28 @@
-import './styles.styl';
-
+// eslint-disable-next-line simple-import-sort/imports
 import DOMPurify from 'dompurify';
 import React from 'react';
-
+import {
+  TooltipContainer,
+  TooltipTriangle,
+  TooltipClose,
+  TooltipInner,
+} from './styles.js';
+import { VscClose } from 'react-icons/vsc';
 // i need to add TS
 const Tooltip = React.forwardRef(function Tooltip(
   { children, closeTooltip, ...props },
   ref
 ) {
   return (
-    <div className="tooltip" {...props} ref={ref}>
-      <div className="tooltip__close" onClick={() => closeTooltip()}>
-        X
-      </div>
-      <div className="tooltip__inner">{children}</div>
-      <div className="tooltip__triangle"></div>
-    </div>
+    <TooltipContainer {...props} ref={ref}>
+      <TooltipClose onClick={() => closeTooltip()}>
+        <VscClose size="1.5em" />
+      </TooltipClose>
+      <TooltipInner>{children}</TooltipInner>
+      <TooltipTriangle />
+    </TooltipContainer>
   );
-}
-);
+});
 
 export const TooltipTemplate = ({
   title,
@@ -43,11 +47,11 @@ export const TooltipTemplate = ({
           </li>
         )}
         <li>category:{category}</li>
-        <div
-          className="content"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }}
-        ></div>
       </ul>
+      <div
+        className="content"
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }}
+      ></div>
     </div>
   );
 };

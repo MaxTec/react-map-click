@@ -1,12 +1,12 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 export const Container = styled.div`
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: ${(props) => props.theme.borderRadius};
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 11px;
+  line-height: 20px;
   text-align: center;
   z-index: 100;
   top: 50%;
@@ -16,15 +16,16 @@ export const Container = styled.div`
     return `absolute`;
   }};
   right: ${(props) => {
-    if (props.position && props.position == "right") return "10px";
+    if (props.position && props.position === 'right') return '10px';
     return false;
   }};
-  border: ${(props) => {
-    return `1px solid ${props.theme.secondaryColor}`;
-  }};
+  border-style: solid;
+  border-width: ${(props) => props.theme.borderWidth || 2};
+  border-color: ${(props) => props.color || props.theme.color.primary};
+  background-color: ${(props) => props.theme.color.neutral.light};
+  color: ${(props) => props.theme.color.primary};
 `;
 const Badge = ({ counter, position, ...props }) => {
-  //   console.log(counter);
   return (
     <Container hasData={counter > 0} position={position}>
       {counter}

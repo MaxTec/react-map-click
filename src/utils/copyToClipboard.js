@@ -5,10 +5,10 @@ export const copyToClipboard = (element) => {
     range.selectNodeContents(element);
     selection.removeAllRanges();
     selection.addRange(range);
-    document.execCommand("copy");
+    document.execCommand('copy');
     clearSelection();
   } catch (err) {
-    alert("Copy failed.");
+    alert('Copy failed.');
   }
 };
 const clearSelection = () => {

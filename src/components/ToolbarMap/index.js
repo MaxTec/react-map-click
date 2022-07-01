@@ -1,92 +1,108 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { BiPointer } from 'react-icons/bi';
+import { IoOptions } from 'react-icons/io5';
+import { MdCenterFocusWeak } from 'react-icons/md';
 import {
-  ToolbarButton,
-  IconCursor,
-  IconPan,
-  IconFit,
-  IconZoomIn,
-  IconZoomOut,
+  VscChromeClose,
+  VscMove,
+  VscZoomIn,
+  VscZoomOut,
+} from 'react-icons/vsc';
+import {
   TOOL_AUTO,
   TOOL_NONE,
   TOOL_PAN,
   TOOL_ZOOM_IN,
   TOOL_ZOOM_OUT,
-  POSITION_TOP,
-} from "react-svg-pan-zoom";
-import "./styles.styl";
-const ToolBar = ({ fitToViewer, ...props }) => {
+  // ToolbarButton,
+} from 'react-svg-pan-zoom';
+
+import Button from '../Button';
+import { ToolbarMap, ToolbarMapClose } from './styles.js';
+
+// eslint-disable-next-line react/display-name
+const ToolBar = ({ fitToViewer, tool, onChangeTool }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    console.log('SE RENDERIZA');
+  }, []);
   return (
     <>
-      <div className='toolbar-map'>
-        {props.show ? (
+      <ToolbarMap>
+        {isOpen ? (
           <>
-            <ToolbarButton
-              activeColor='green'
-              toolbarPosition={POSITION_TOP}
-              title='NONE'
-              name='NONE'
-              active={props.tool == TOOL_NONE}
+            <Button
+              fit
+              title="NONE"
+              active={tool === TOOL_NONE}
               onClick={() => {
-                props.changeTool(TOOL_NONE);
+                onChangeTool(TOOL_NONE);
               }}
             >
-              <IconCursor />
-            </ToolbarButton>
-            <ToolbarButton
-              activeColor='green'
-              toolbarPosition={POSITION_TOP}
-              active={props.tool == TOOL_ZOOM_IN}
-              title='ZOOM'
-              name='ZOOM'
+              <BiPointer size="1.3em" />
+            </Button>
+            <Button
+              fit
+              active={tool === TOOL_ZOOM_IN}
+              title="ZOOM"
               onClick={() => {
-                props.changeTool(TOOL_ZOOM_IN);
+                onChangeTool(TOOL_ZOOM_IN);
               }}
             >
-              <IconZoomIn />
-            </ToolbarButton>
-            <ToolbarButton
-              activeColor='green'
-              toolbarPosition={POSITION_TOP}
-              active={props.tool == TOOL_PAN}
-              title='MOVE'
-              name='MOVE'
+              <VscZoomIn size="1.3em" />
+            </Button>
+            <Button
+              fit
+              active={tool === TOOL_ZOOM_OUT}
+              title="ZOOM"
               onClick={() => {
-                props.changeTool(TOOL_PAN);
+                onChangeTool(TOOL_ZOOM_OUT);
               }}
             >
-              <IconPan />
-            </ToolbarButton>
-            <ToolbarButton
-              activeColor='green'
-              toolbarPosition={POSITION_TOP}
+              <VscZoomOut size="1.3em" />
+            </Button>
+            <Button
+              fit
+              active={tool === TOOL_PAN}
+              title="MOVE"
+              onClick={() => {
+                onChangeTool(TOOL_PAN);
+              }}
+            >
+              <VscMove size="1.5em" />
+            </Button>
+            <Button
+              fit
               active={false}
-              title='CENTER'
-              name='CENTER'
+              title="CENTER"
               onClick={() => {
                 fitToViewer();
               }}
             >
-              <span>CENTRAR</span>
-            </ToolbarButton>
-            <button
-              onClick={() => {
-                props.toggle();
-              }}
-              className='hide'
-            >
+              <MdCenterFocusWeak size="1.5em" />
+            </Button>
+            {isOpen && (
+              <ToolbarMapClose
+                onClick={() => {
+                  setIsOpen(false);
+                }}
               >
-            </button>
+                <VscChromeClose size="1.3em" />
+              </ToolbarMapClose>
+            )}
           </>
         ) : (
-          <button
+          <Button
+            fit
             onClick={() => {
-              props.toggle();
+              // toggle();
+              setIsOpen(true);
             }}
           >
-            Show
-          </button>
+            <IoOptions />
+          </Button>
         )}
-      </div>
+      </ToolbarMap>
     </>
   );
 };

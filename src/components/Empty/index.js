@@ -1,23 +1,35 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { TbMoodEmpty } from 'react-icons/tb';
 export const Container = styled.div`
   width: 100%;
   max-width: 200px;
-  max-height: 100%;
+  height: 100%;
   background: #ffffff;
   overflow: hidden;
   padding: 1rem;
   text-align: center;
-  border: ${(props) => {
-    console.log(props);
-    return `1px solid ${props.theme.secondaryColor}`;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: ${(props) => {
+    return `${props.theme.color.primary}`;
+  }};
+`;
+export const P = styled.p`
+
+  font-size: ${(props) => {
+    return `${props.fontSize}`;
   }};
 `;
 const Empty = () => {
   return (
     <React.Fragment>
-      <Container>No se encontró ningún elemento</Container>
+      <Container>
+        <TbMoodEmpty size="4em" />
+        <P>No se encontró ningún elemento</P>
+      </Container>
     </React.Fragment>
   );
 };
