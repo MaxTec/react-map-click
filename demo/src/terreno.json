@@ -58,8 +58,8 @@
           "description": "<div>Superficie: 2,500.00 m<sup>2</sup></div><div>Precio: $ 880,000.00</div><div>Estado: Huerto reservado lorem aew q3rg wrg w rgw4 grwervwrvwervwerv wervwervwrev wervwervwr vwrv owhecowecoiew oweihcowehcoweh woechowecoiwe woeihcowie</div>",
           "id_huerto": "1",
           "huerto": "1",
-          "x": "116",
-          "y": "162"
+          "x": "0.3037",
+          "y": "0.4616"
         },
         {
           "id": "m1lote2",
@@ -113,8 +113,8 @@
           "description": "<div>Superficie: 405.55 m<sup>2</sup></div><div>Precio: $ 486,660.00</div><div>Estado: Huerto libre</div>",
           "id_huerto": "766",
           "huerto": "1b",
-          "x": "400",
-          "y": "508"
+          "x": "0.2006",
+          "y": "0.2962"
         },
         {
           "id": "m2lote2",
@@ -125,8 +125,8 @@
           "description": "<div>Superficie: 312.50 m<sup>2</sup></div><div>Precio: $ 110,000.00</div><div>Estado: Huerto en proceso de pago</div><div><a href=\"./ventas/historial/376/pagos\"><i class=\"fa fa-user\" aria-hidden=\"true\"></i>Alma Guadalupe Nu\u00f1ez Hau</a></div>",
           "id_huerto": "6",
           "huerto": "2",
-          "x": "0.8222",
-          "y": "0.36"
+          "x": "0.5025",
+          "y": "0.8783"
         },
         {
           "id": "m2lote2b",

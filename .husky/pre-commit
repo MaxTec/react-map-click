@@ -2,4 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Run lint files on staged files
-npx --no-install lint-staged --config ./.lintstagedrc.json --verbose
+# npx --no-install lint-staged --config ./.lintstagedrc.json --verbose

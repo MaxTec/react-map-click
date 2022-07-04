@@ -17,6 +17,7 @@ import Search from './components/Search';
 import Select from './components/Select';
 import ToolBarMap from './components/ToolbarMap';
 import ToolTip, { TooltipTemplate } from './components/tooltip';
+import HoverTooltip from './components/HoverTooltip';
 import Window from './components/window';
 import useStateCallback from './hooks/useStateCallback';
 import { copyToClipboard } from './utils/copyToClipboard';
@@ -25,11 +26,13 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
   const { mapheight, mapwidth } = data;
   const Viewer = useRef(null);
   const Tooltip = useRef(null);
+  const Hovertooltip = useRef(null);
   const DeveloperRef = useRef(null);
   const [tool, setTool] = useState(TOOL_NONE);
   const [value, setValue] = useState(INITIAL_VALUE);
   const [developerCoords, setDeveloperCoords] = useState({});
   const [tooltip, setTooltip] = useState(null);
+  const [hoverTooltip, setHoverTooltip] = useState(null);
   const [fullWidth, setFullWidth] = useState(false);
   const [isMapLoaded, setisMapLoaded] = useState(false);
   // se debe filtrar la disponibilidad desde el back :v
@@ -89,13 +92,9 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
       const { x, y, id } = selected;
       const element = document.getElementById(id);
       const sizes = element.getBBox();
+      // fallback
+      // (location.x * 100) + '%'
       const sizesRect = element.getBoundingClientRect();
-      // console.log('RECT :', sizesRect.x * zoom, sizesRect.y);
-      // console.log('SVG :', sizes.x * zoom, sizes.y);
-      // return {
-      //   left: x - tooltipWidth / 2 + sizesRect.width / 2,
-      //   top: y,
-      // };
       console.log('AREA:', (sizesRect.width * sizesRect.height) / 2);
       // return {
       //   left: sizesRect.x / zoom - sizesRect.width / zoom,
@@ -111,20 +110,32 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
       // const sumY = y * zoom;
       // const sumY = y * zoom;
       const sumY = (sizes.y || y) * zoom;
-      // if (x && y && !developer) return { left: sumX, top: sumY };
-
-      // let cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e;
       let cx = 0;
-      console.log(x, y, (x * y) / 2);
       // if ((sizesRect.width * sizesRect.height) / 2 < 8000) {
       cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e; // this works with sizes GetBBox()
-      // } else {
-      //   cx = sumX + (sizes.width * zoom) / 2 - sizes.width + e;
-      // }
-
       let cy = sumY + (sizes.height * zoom) / 2 - tooltipHeight + f; // this works with sizes GetBBox()
       return { left: cx, top: cy };
     }
+    return false;
+  };
+  const getHoverTooltipPosition = (el) => {
+    const zoom = parseFloat(value.a.toFixed(4));
+    const e = parseFloat(value.e.toFixed(4));
+    const f = parseFloat(value.f.toFixed(4));
+    const sizes = el.getBBox();
+    const tooltipWidth = Hovertooltip.current
+      ? Hovertooltip.current.offsetWidth
+      : 80;
+    const tooltipHeight = Hovertooltip.current
+      ? Hovertooltip.current.offsetHeight
+      : 40;
+    const sumX = (sizes.x || x) * zoom;
+    const sumY = (sizes.y || y) * zoom;
+    let cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e; // this works with sizes GetBBox()
+    let cy = sumY + (sizes.height * zoom) / 2 - tooltipHeight + f; // this works with sizes GetBBox()
+    // sobreescribimos x y y (si no necesitamos el fallback)
+    if (selected && selected.id == el.id) return false;
+    setHoverTooltip({ ...findLot(el.id), left: cx, top: cy });
     return false;
   };
   const moveTooltipTo = () => {
@@ -165,6 +176,7 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
     <React.Fragment>
       <div style={{ height: '10vh' }}>HOA</div>
       <Window
+        id="cuack"
         theme={theme ? theme : undefined}
         dark
         height={maxHeight}
@@ -214,13 +226,22 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
           width={maxWidth}
           height={maxHeight}
           detectWheel={tooltip ? false : true}
-          // onMouseMove={(event) => {
-          //   const { x, y } = event;
-          //   if (!developer) {
-          //     return false;
-          //   }
-          //   setDeveloperCoords({ x: x.toFixed(2), y: y.toFixed(2) });
-          // }}
+          onMouseMove={(e) => {
+            const target = document.getElementById('cuack');
+            var x =
+                (e.originalEvent.pageX - target.offsetLeft) /
+                e.value.viewerWidth /
+                e.scaleFactor,
+              y =
+                (e.originalEvent.pageY - target.offsetTop) /
+                e.value.viewerHeight /
+                e.scaleFactor;
+            console.log(x, y);
+            if (!developer) {
+              return false;
+            }
+            setDeveloperCoords({ x: x.toFixed(2), y: y.toFixed(2) });
+          }}
           // onClick={(event) => {
           //   if (developer) {
           //     const sizes = event.originalEvent.target.getBBox();
@@ -236,19 +257,6 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
             height: 70,
             border: '1px solid red',
           }}
-          // customMiniature={(element, func) => {
-          //   console.log(element, func);
-          //   return (
-          //     <div
-          //       className="mini"
-          //       style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000 }}
-          //     >
-          //       <svg width="100" height="80" style={{ pointerEvents: 'none' }}>
-          //         {element.children}
-          //       </svg>
-          //     </div>
-          //   );
-          // }}
         >
           <svg
             viewBox={`0 0 ${mapwidth} ${mapheight}`}
@@ -266,12 +274,18 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
             >
               {currentMap.locations.map((ele) => (
                 <SvgProxy
-                  // class="selectable"
                   key={ele.id}
                   selector={`#${ele.id}`}
                   // selector="[id^=landmark] > *"
-                  fill={currentMap.fill || '#8e44ad'}
+                  fill={currentMap.fill || '#8e44ad'} // tener un color por defecto.
+                  onMouseEnter={(e) => {
+                    getHoverTooltipPosition(e.target);
+                  }}
+                  // onMouseLeave={(e) => {
+                  //   setHoverTooltip(null);
+                  // }}
                   onClick={(e) => {
+                    // !NOTA: developer puede ir aca
                     const { id } = e.target;
                     setSelected(findLot(id));
                   }}
@@ -319,6 +333,24 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
           <TooltipTemplate {...selected} />
         </ToolTip>
         {developer && <Developer data={developerCoords} ref={DeveloperRef} />}
+        {hoverTooltip && (
+          <HoverTooltip
+            ref={Hovertooltip}
+            style={{
+              transitionProperty: 'top, left',
+              transitionDuration: '.2s',
+              transitionTimingFunction: 'linear',
+              opacity: `${hoverTooltip ? 100 : 0} `,
+              visibility: `${hoverTooltip ? 'visible' : 'hidden'} `,
+              position: 'absolute',
+              left: hoverTooltip ? `${hoverTooltip.left}px` : 0,
+              top: hoverTooltip ? `${hoverTooltip.top}px` : 0,
+              pointerEvents: 'none',
+            }}
+          >
+            {hoverTooltip.title}
+          </HoverTooltip>
+        )}
       </Window>
     </React.Fragment>
   );

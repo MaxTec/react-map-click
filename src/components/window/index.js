@@ -82,7 +82,7 @@ const Window = ({ theme, ...props }) => {
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
         <WindowNavBar
-          {...props}
+          // {...props}
           toggleTheme={() => {
             setIsDark(!isDark);
           }}
