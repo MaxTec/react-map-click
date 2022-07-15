@@ -180,15 +180,6 @@ const ReactMapClick = (props) => {
                 // toolbarProps={{ activeToolColor: "#ffffff" }}
                 value={value}
                 detectWheel={tooltip ? false : true}
-                // Ya no se necesita, inhabilito PAN cuando existe un Tooltip abierto
-                // onPan={(pan) => {
-                //   this.setState({ value: pan }, () => this.moveTooltipTo(pan));
-                // }}
-                // onZoom={(zoom) => {
-                //   console.log(zoom);
-                //   this.setState({ value: zoom }, () => this.moveTooltipTo(zoom));
-                // }}
-                // onChangeValue={(value) => this.changeValue(value)}
                 onChangeValue={setValue}
                 // onTouchEnd={(value) => {
                 //   console.log(value);

@@ -82,7 +82,7 @@ const Search = styled('input')`
   top: 0;
   left: 0;
   &::placeholder {
-    color: ${(props) => lighten(0.5, props.theme.color.text)};
+    color: ${(props) => lighten(0.45, props.theme.color.text)};
   }
 `;
 const Select = ({ data, value, callback, ...props }) => {

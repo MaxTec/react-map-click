@@ -5,8 +5,8 @@ module.exports = {
     umd: {
       global: 'ReactMapClick',
       externals: {
-        react: 'React'
-      }
-    }
-  }
-}
+        react: 'React',
+      },
+    },
+  },
+};

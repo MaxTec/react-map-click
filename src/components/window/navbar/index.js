@@ -1,21 +1,23 @@
+import { invert, rgba } from 'polished';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
   VscChromeClose,
   VscChromeMaximize,
   VscChromeMinimize,
-  VscSettingsGear,
+  VscCode,
   VscSymbolColor,
 } from 'react-icons/vsc';
 import styled from 'styled-components';
 
 import Button from '../../Button';
+import Dropdown from '../../DropDown';
 // Define our button
 const NavbarWindow = styled.div`
   /* font-size: 1em; */
   font-size: ${(props) => props.theme.fontSize};
   width: ${(props) => {
-    return props.width + 3;
+    return props.width;
   }}px;
   margin: 0 auto;
   padding: 0.35em;
@@ -41,6 +43,22 @@ const NavbarWindowInner = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+const LiItem = styled.li`
+  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => {
+      return rgba(props.theme.color.primary, 0.2);
+    }};
+    color: ${(props) => {
+      return invert(props.theme.color.neutral.light);
+    }};
+  }
+`;
 const WindowNavBar = (props) => {
   // !NOTA: pasa como prop
   const d = new Date();
@@ -51,24 +69,26 @@ const WindowNavBar = (props) => {
       <NavbarWindow {...props}>
         <NavbarWindowInner>
           <div className="navbar-window__title">
-            {/* Hola, Buenas{' '}
-            {hour > 12 ? (hour > 20 ? 'Noches;' : 'Tardes') : 'Dias'}
-            {hour > 7 ? <span>&#127769;</span> : <span>&#127774;</span>} */}
-            <Button
-              width="200px"
-              onClick={() => {
-                props.toggleTheme();
-              }}
-            >
-              <VscSettingsGear size="1.3em" />
-            </Button>
+            <Dropdown>
+              <ul>
+                <LiItem
+                  onClick={() => {
+                    props.toggleTheme();
+                  }}
+                >
+                  Toggle theme{' '}
+                  <VscSymbolColor style={{ marginLeft: 10 }} size="1.3rem" />
+                </LiItem>
+                <LiItem>
+                  Enable developer tools{' '}
+                  <VscCode style={{ marginLeft: 10 }} size="1.3rem" />
+                </LiItem>
+              </ul>
+            </Dropdown>
           </div>
           <Controls>
             <Button fit>
               <VscChromeMinimize />
-            </Button>
-            <Button fit>
-              <VscChromeClose />
             </Button>
             <Button fit>
               <VscChromeMaximize
@@ -76,6 +96,9 @@ const WindowNavBar = (props) => {
                   props.fullWidth(true);
                 }}
               />
+            </Button>
+            <Button fit>
+              <VscChromeClose />
             </Button>
           </Controls>
         </NavbarWindowInner>

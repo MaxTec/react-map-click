@@ -5,6 +5,7 @@ import reset from 'styled-reset';
 
 import WindowNavBar from './navbar';
 import { darkTheme, lightTheme } from './theme';
+
 console.log(reset);
 const GlobalStyle = createGlobalStyle`
  ${reset}
@@ -26,6 +27,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: #ffffff;
     font-family:  'Roboto', sans-serif;
+    font-size: 14px;
   }
   ul{
     list-style:none;
@@ -53,7 +55,7 @@ const GlobalStyle = createGlobalStyle`
   }
   //clase requerida para animaciones en mapas
   .zoomAble > svg > g{
-    transition:transform 0.35s ease-in-out
+    transition:transform 0.5s ease-in-out
   }
   input[type="text"]{
     padding-inline:0.5rem;
@@ -62,27 +64,28 @@ const GlobalStyle = createGlobalStyle`
 `;
 const BodyWindow = styled.div`
   width: ${(props) => {
-    // console.log(props);
-    return props.width - 2;
+    return props.width;
   }}px;
   /* height: ${(props) => props.height + 10}px; */
-  border-radius: 0px 0px 5px 5px;
+  /* border-radius: 0px 0px 5px 5px; */
   color: ${(props) => props.theme.primaryColor};
-  /* border: 2px solid ${(props) => props.theme.primaryColor}; */
   position: relative;
   margin: auto;
-  // display: flex;
+  z-index: 1000;
 `;
-// aca puedo recibir las props
 const Window = ({ theme, ...props }) => {
-  // const mergedTheme = theme ? { ...lightTheme, ...theme } : lightTheme;
   const [isDark, setIsDark] = useState(false);
   return (
     <React.Fragment>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+      <ThemeProvider
+        theme={
+          isDark ? { ...darkTheme, ...theme } : { ...lightTheme, ...theme }
+        }
+      >
         <GlobalStyle />
         <WindowNavBar
           // {...props}
+          width={props.width}
           toggleTheme={() => {
             setIsDark(!isDark);
           }}

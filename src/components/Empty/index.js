@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import { TbMoodEmpty } from 'react-icons/tb';
+import styled from 'styled-components';
+
 export const Container = styled.div`
   width: 100%;
   max-width: 200px;

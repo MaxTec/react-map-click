@@ -3,7 +3,7 @@
 import { useWindowSize } from '@react-hook/window-size';
 import { filter, head } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   INITIAL_VALUE,
   ReactSVGPanZoom,
@@ -17,8 +17,8 @@ import Search from './components/Search';
 import Select from './components/Select';
 import ToolBarMap from './components/ToolbarMap';
 import ToolTip, { TooltipTemplate } from './components/tooltip';
-import HoverTooltip from './components/HoverTooltip';
 import Window from './components/window';
+import Info from './components/Info';
 import useStateCallback from './hooks/useStateCallback';
 import { copyToClipboard } from './utils/copyToClipboard';
 
@@ -79,6 +79,9 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
     const getRow = getCurrentBlock(block);
     setCurrentMap(getRow);
     _fitToViewer();
+    if (tooltip) {
+      setTooltip(null);
+    }
   };
   const getPositionToolTip = () => {
     const zoom = parseFloat(value.a.toFixed(4));
@@ -129,6 +132,8 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
     const tooltipHeight = Hovertooltip.current
       ? Hovertooltip.current.offsetHeight
       : 40;
+    console.log('tooltipWidth', 'tooltipHeight');
+    console.log(tooltipWidth, tooltipHeight);
     const sumX = (sizes.x || x) * zoom;
     const sumY = (sizes.y || y) * zoom;
     let cx = sumX + (sizes.width * zoom) / 2 - tooltipWidth / 2 + e; // this works with sizes GetBBox()
@@ -141,8 +146,8 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
   const moveTooltipTo = () => {
     const { left, top } = getPositionToolTip();
     setTooltip({
-      x: left,
-      y: top,
+      left,
+      top,
     });
     return false;
   };
@@ -226,22 +231,22 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
           width={maxWidth}
           height={maxHeight}
           detectWheel={tooltip ? false : true}
-          onMouseMove={(e) => {
-            const target = document.getElementById('cuack');
-            var x =
-                (e.originalEvent.pageX - target.offsetLeft) /
-                e.value.viewerWidth /
-                e.scaleFactor,
-              y =
-                (e.originalEvent.pageY - target.offsetTop) /
-                e.value.viewerHeight /
-                e.scaleFactor;
-            console.log(x, y);
-            if (!developer) {
-              return false;
-            }
-            setDeveloperCoords({ x: x.toFixed(2), y: y.toFixed(2) });
-          }}
+          // onMouseMove={(e) => {
+          //   const target = document.getElementById('cuack');
+          //   var x =
+          //       (e.originalEvent.pageX - target.offsetLeft) /
+          //       e.value.viewerWidth /
+          //       e.scaleFactor,
+          //     y =
+          //       (e.originalEvent.pageY - target.offsetTop) /
+          //       e.value.viewerHeight /
+          //       e.scaleFactor;
+          //   console.log(x, y);
+          //   if (!developer) {
+          //     return false;
+          //   }
+          //   setDeveloperCoords({ x: x.toFixed(2), y: y.toFixed(2) });
+          // }}
           // onClick={(event) => {
           //   if (developer) {
           //     const sizes = event.originalEvent.target.getBBox();
@@ -263,6 +268,11 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
             width={mapwidth}
             height={mapheight}
           >
+            {/* <image
+              width="100"
+              height="50"
+              xlinkHref="https://huertoslaceiba.com/public/assets/img/logos/logo.png"
+            /> */}
             <SvgLoader
               // viewBox={`0 0 ${mapwidth} ${mapheight}`}
               // width={mapwidth}
@@ -279,11 +289,13 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
                   // selector="[id^=landmark] > *"
                   fill={currentMap.fill || '#8e44ad'} // tener un color por defecto.
                   onMouseEnter={(e) => {
-                    getHoverTooltipPosition(e.target);
+                    if (width > 600) {
+                      getHoverTooltipPosition(e.target);
+                    }
                   }}
-                  // onMouseLeave={(e) => {
-                  //   setHoverTooltip(null);
-                  // }}
+                  onMouseLeave={(e) => {
+                    setHoverTooltip(null);
+                  }}
                   onClick={(e) => {
                     // !NOTA: developer puede ir aca
                     const { id } = e.target;
@@ -309,7 +321,6 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
           />
         )}
         <ToolTip
-          className="tooltip"
           ref={Tooltip}
           closeTooltip={() => {
             setSelected(false);
@@ -317,40 +328,32 @@ const ReactMapClick = ({ data, theme, showSearch, developer }) => {
             markItem(null);
             Viewer.current.reset();
           }}
-          style={{
-            transitionProperty: 'top, left',
-            transitionDuration: '.2s',
-            transitionTimingFunction: 'linear',
-            // transform: `scale(${getZoomScaleTooltip()})`,
-            opacity: `${tooltip && selected ? 100 : 0} `,
-            visibility: `${tooltip && selected ? 'visible' : 'hidden'} `,
-            position: 'absolute',
-            left: tooltip ? `${tooltip.x}px` : 0,
-            top: tooltip ? `${tooltip.y}px` : 0,
-            // animation: 'bounce 1s',
-          }}
+          datos={tooltip}
+          active={selected}
         >
           <TooltipTemplate {...selected} />
         </ToolTip>
         {developer && <Developer data={developerCoords} ref={DeveloperRef} />}
         {hoverTooltip && (
-          <HoverTooltip
+          <ToolTip
+            className="hover"
+            hover={true}
             ref={Hovertooltip}
-            style={{
-              transitionProperty: 'top, left',
-              transitionDuration: '.2s',
-              transitionTimingFunction: 'linear',
-              opacity: `${hoverTooltip ? 100 : 0} `,
-              visibility: `${hoverTooltip ? 'visible' : 'hidden'} `,
-              position: 'absolute',
-              left: hoverTooltip ? `${hoverTooltip.left}px` : 0,
-              top: hoverTooltip ? `${hoverTooltip.top}px` : 0,
-              pointerEvents: 'none',
-            }}
+            datos={hoverTooltip}
           >
-            {hoverTooltip.title}
-          </HoverTooltip>
+            {hoverTooltip && hoverTooltip.title}
+          </ToolTip>
         )}
+        <Info data={currentMap}>
+          Contrary to popular belief, Lorem Ipsum is not simply random text. It
+          has roots in a piece of classical Latin literature from 45 BC, making
+          it over 2000 years old. Richard McClintock, a Latin professor at
+          Hampden-Sydney College in Virginia, looked up one of the more obscure
+          Latin words, consectetur, from a Lorem Ipsum passage, and going
+          through the cites of the word in classical literature, discovered the
+          undoubtable source. Lorem Ipsum comes from sections 1.10.32 and
+          1.10.33 of
+        </Info>
       </Window>
     </React.Fragment>
   );

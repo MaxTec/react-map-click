@@ -78,6 +78,7 @@ const Search = ({ data, showTooltip, height, changeBlock, level }) => {
           </FilterContainer> */}
           <WrapSearchInput>
             <SearchInput
+              isSearching={searchString !== ''}
               type="text"
               placeholder="Buscar"
               value={searchString}
@@ -109,11 +110,18 @@ const Search = ({ data, showTooltip, height, changeBlock, level }) => {
                 setFiltered(res);
               }}
             />
-            {searchString !== '' && (
-              <CloseSearch onClick={() => setSearchString('')}>
-                <VscClose size="1.3em" />
-              </CloseSearch>
-            )}
+
+            <CloseSearch
+              onClick={() =>
+                searchString !== '' ? setSearchString('') : false
+              }
+            >
+              {searchString !== '' ? (
+                <VscClose size="1em" />
+              ) : (
+                <VscSearch size="1em" />
+              )}
+            </CloseSearch>
           </WrapSearchInput>
           <SearchContainer>
             {filtered && filtered.length > 0 ? (

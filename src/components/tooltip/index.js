@@ -15,9 +15,12 @@ const Tooltip = React.forwardRef(function Tooltip(
 ) {
   return (
     <TooltipContainer {...props} ref={ref}>
-      <TooltipClose onClick={() => closeTooltip()}>
-        <VscClose size="1.5em" />
-      </TooltipClose>
+      {!props.hover && (
+        <TooltipClose onClick={() => closeTooltip()}>
+          <VscClose size="1.5em" />
+        </TooltipClose>
+      )}
+
       <TooltipInner>{children}</TooltipInner>
       <TooltipTriangle />
     </TooltipContainer>
@@ -34,7 +37,7 @@ export const TooltipTemplate = ({
   return (
     <div className="tooltip__content">
       <ul className="tooltip__list">
-        <li>title:{title || 'N/A'}</li>
+        <li>{title || 'N/A'}</li>
         {about && (
           <li>
             about:
@@ -46,7 +49,7 @@ export const TooltipTemplate = ({
             }
           </li>
         )}
-        <li>category:{category}</li>
+        <li>{category}</li>
       </ul>
       <div
         className="content"

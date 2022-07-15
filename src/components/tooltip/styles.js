@@ -2,21 +2,31 @@ import { darken } from 'polished';
 import styled from 'styled-components';
 
 export const TooltipContainer = styled.div`
-  min-height: 80px;
-  width: 250px;
+  /* min-height: 80px; */
+  min-height: ${(props) => (!props.hover ? '80px:' : 'auto')};
+  width: ${(props) => (!props.hover ? '250px:' : 'auto')};
   background-color: #ffffff;
   border-radius: 5px;
-  position: relative;
+  position: absolute;
   padding-block: 0.5rem;
   padding-inline: 0.5rem;
-  box-shadow: 4px 4px 5px rgba(#000, 20%);
   border-style: solid;
   border-width: ${(props) => props.theme.borderWidth || 2};
   border-color: ${(props) => props.color || props.theme.color.primary};
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  transition-property: top, left;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  pointer-events: ${(props) => (props.hover ? 'none' : 'auto')};
+  opacity: ${(props) => (props.datos ? '100' : '0')};
+  visibility: ${(props) => (props.datos ? 'visible' : 'hidden')};
+  top: ${(props) => (props.datos ? props.datos.top : 0)}px;
+  left: ${(props) => (props.datos ? props.datos.left : 0)}px;
+  max-width: ${(props) => (props.hover ? '150px' : '250px')};
 `;
 export const TooltipInner = styled.div`
   padding: 0.25rem;
+  font-size: 14px;
   color: ${(props) => props.color || props.theme.color.primary};
 `;
 export const TooltipClose = styled.div`

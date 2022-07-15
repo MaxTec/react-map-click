@@ -38,7 +38,7 @@ export default class Demo extends Component {
         //   console.log("termino de cargar El Mapa :)");
         // }}
         data={data}
-        theme={{ primaryColor: "green" }}
+        // theme={{ primaryColor: "green" }}
       />
     );
   }

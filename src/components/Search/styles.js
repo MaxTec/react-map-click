@@ -1,4 +1,4 @@
-import { darken, lighten, invert, rgba } from 'polished';
+import { invert, lighten, rgba } from 'polished';
 import styled from 'styled-components';
 
 export const SearchInput = styled.input`
@@ -10,17 +10,13 @@ export const SearchInput = styled.input`
   }};
   outline: none;
   color: ${(props) => props.theme.color.text};
-  /* padding-inline: 0.5rem;
-  padding-block: 0.25rem; */
   border-inline: 0;
-  border-block: ${(props) => {
+  border: none;
+  border-bottom: ${(props) => {
     return `${props.theme.borderWidth} solid ${props.theme.color.primary}`;
   }};
-  box-shadow: ${(props) => {
-    return `${props.theme.boxShadow}`;
-  }};
   &::placeholder {
-    color: ${(props) => lighten(0.5, props.theme.color.text)};
+    color: ${(props) => lighten(0.45, props.theme.color.text)};
   }
 `;
 
@@ -34,9 +30,9 @@ export const Container = styled.div`
   background: #ffffff;
   overflow: hidden;
   position: absolute;
-  left: -202px;
+  left: -200px;
   z-index: 100;
-  top: -2px;
+  top: 0px;
   box-sizing: border-box;
   border-style: solid;
   border-width: ${(props) => {
@@ -48,7 +44,7 @@ export const Container = styled.div`
   /* border: ${(props) => {
     return `2px solid ${props.theme.color.primary}`;
   }}; */
-  border-right: 0;
+  /* border-right: 0; */
 `;
 
 export const SearchContainer = styled.ul`
@@ -110,10 +106,10 @@ export const LotContainer = styled.ul`
 export const HideButton = styled.button`
   width: 100%;
   position: absolute;
-  height: 40px;
+  height: 35px;
   line-height: 0;
-  width: 40px;
-  left: -40px;
+  width: 35px;
+  left: -35px;
   top: ${(props) => {
     return `-${props.theme.borderWidth}`;
   }};
