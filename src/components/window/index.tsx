@@ -66,8 +66,6 @@ const BodyWindow = styled.div`
   width: ${(props) => {
     return props.width;
   }}px;
-  /* height: ${(props) => props.height + 10}px; */
-  /* border-radius: 0px 0px 5px 5px; */
   color: ${(props) => props.theme.primaryColor};
   position: relative;
   margin: auto;

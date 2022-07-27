@@ -1,4 +1,3 @@
-// import './styles.styl';
 import { darken, lighten } from 'polished';
 import React from 'react';
 import styled from 'styled-components';

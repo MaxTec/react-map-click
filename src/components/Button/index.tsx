@@ -1,11 +1,9 @@
-import { darken, desaturate, lighten, invert, complement } from 'polished';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { complement, darken, desaturate, invert, lighten } from 'polished';
+import * as React from 'react';
 import styled, { css } from 'styled-components';
-// Define our button
+
 export const ButtonContainer = styled.button`
   font-size: ${(props) => props.theme.fontSize || '14px'};
-  /* display: ${(props) => (props.fit ? 'inline' : 'inline-block')}; */
   min-width: 35px;
   user-select: none;
   font-weight: 400;
@@ -44,16 +42,10 @@ export const ButtonContainer = styled.button`
     return false;
   }}
 `;
-const Button = ({ children, ...props }) => {
-  return (
-    <React.Fragment>
-      <ButtonContainer {...props}>{children || 'Press Me'}</ButtonContainer>
-    </React.Fragment>
-  );
+
+const Button: any = ({ children, ...props }) => {
+  return <ButtonContainer {...props}> children || 'Press Me'</ButtonContainer>;
 };
 
-Button.propTypes = {
-  children: PropTypes.node,
-};
 
 export default Button;
